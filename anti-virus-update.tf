@@ -68,9 +68,10 @@ data "aws_iam_policy_document" "main_update" {
 }
 
 resource "aws_iam_role" "main_update" {
-  name               = "lambda-${var.name_update}"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_update.json
-  tags               = var.tags
+  name                 = "lambda-${var.name_update}"
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_update.json
+  permissions_boundary = var.permissions_boundary
+  tags                 = var.tags
 }
 
 resource "aws_iam_role_policy" "main_update" {
@@ -123,7 +124,7 @@ resource "aws_lambda_function" "main_update" {
   description = "Updates clamav definitions stored in s3."
 
   s3_bucket = var.lambda_s3_bucket
-  s3_key    = "${var.lambda_package}/${var.lambda_version}/${var.lambda_package}.zip"
+  s3_key    = var.lambda_package_key
 
   function_name = var.name_update
   role          = aws_iam_role.main_update.arn
